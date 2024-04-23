@@ -1,0 +1,197 @@
+set title
+set number
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set smartindent
+
+" Plugins
+call plug#begin('~/.config/nvim/plugged')
+
+" Theme
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+
+
+Plug 'folke/neodev.nvim'
+
+" Latex
+Plug 'lervag/vimtex'
+Plug 'SirVer/ultisnips'
+
+" File browswer
+Plug 'preservim/nerdtree'
+
+" LSP
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-git'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+Plug 'kdheepak/cmp-latex-symbols'
+
+Plug 'tpope/vim-dispatch'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-surround'
+Plug 'LunarWatcher/auto-pairs'
+Plug 'ErrorTzy/vim-marker-down'
+Plug 'tpope/vim-commentary'
+Plug 'bullets-vim/bullets.vim'
+
+
+call plug#end()
+
+nnoremap j gj
+nnoremap k gk
+vnoremap j gj
+vnoremap k gk
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <Esc>:w<CR>a
+nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <C-a> gg0vG$
+vnoremap <C-c> "+y
+nnoremap <C-_> <Plug>CommentaryLine
+vnoremap <C-_> <Plug>Commentary
+inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+
+
+let g:UltiSnipsExpandTrigger       = '<Tab>'    " use Tab to expand snippets
+let g:UltiSnipsJumpForwardTrigger  = '<Tab>'    " use Tab to move forward through tabstops
+let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'  " use Shift-Tab to move backward through tabstops
+colorscheme catppuccin-mocha
+
+" Initialize configuration dictionary
+let g:fzf_vim = {}
+" autocmd VimEnter * NERDTree | wincmd p
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" Bullets.vim
+let g:bullets_enabled_file_types = [
+    \ 'markdown',
+    \ 'text'
+    \]
+let g:python3_host_prog = '~/.config/nvim/venv/bin/python'
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
+let g:vim_markdown_math = 1
+
+lua <<EOF
+-- IMPORTANT: make sure to setup neodev BEFORE lspconfig
+require("neodev").setup({
+  override = function(root_dir, library)
+   library.enabled = true
+   library.plugins = true
+  end,
+})
+
+-- then setup your lsp server as usual
+local lspconfig = require('lspconfig')
+ 
+     -- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+-- example to setup lua_ls and enable call snippets
+lspconfig.lua_ls.setup({
+  settings = {
+    Lua = {
+      completion = {
+        callSnippet = "Replace"
+      }
+    }
+  }
+})
+
+lspconfig.pyright.setup {
+    capabilities = capabilities
+  }
+  -- Set up texlab language server
+  lspconfig.texlab.setup {
+    capabilities = require('cmp_nvim_lsp').default_capabilities(),
+    settings = {
+      texlab = {
+        build = {
+          onSave = true,
+          args = { "-pdf", "-interaction=nonstopmode", "-synctex=1", "-outdir=/home/scott/Documents/app_storage/LatexBuildfiles/", "%f" },
+        },
+        lint = {
+          onSave = true,
+	},
+      },
+    },
+  }
+lspconfig.bashls.setup{}
+
+
+  -- Set up nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+        -- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
+      end,
+    },
+    window = {
+     -- completion = cmp.config.window.bordered(),
+     -- documentation = cmp.config.window.bordered(),
+   },
+   mapping = cmp.mapping.preset.insert({
+     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+     ['<C-f>'] = cmp.mapping.scroll_docs(4),
+     ['<C-Space>'] = cmp.mapping.complete(),
+     ['<C-e>'] = cmp.mapping.abort(),
+     ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+   }),
+   sources = cmp.config.sources({
+     { name = 'nvim_lsp' },
+     -- { name = 'vsnip' }, -- For vsnip users.
+     -- { name = 'luasnip' }, -- For luasnip users.
+     { name = 'ultisnips' }, -- For ultisnips users.
+     -- { name = 'snippy' }, -- For snippy users.
+     { name = 'latex_symbols', 
+       option = {
+         strategy = 0 -- mixed
+       },
+     },
+   }, {
+     { name = 'buffer' },
+   })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    }),
+    matching = { disallow_symbol_nonprefix_matching = false }
+  })
+
+
+EOF
