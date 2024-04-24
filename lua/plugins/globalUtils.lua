@@ -29,8 +29,13 @@ return {
         })
     end
   },
-  { 'echasnovski/mini.pairs', version = false },
-  { 'echasnovski/mini.comment', version = false },
+  {
+    'echasnovski/mini.pairs',
+    version = false,
+    config = function ()
+      require('mini.pairs').setup()
+    end
+  },
   {'ErrorTzy/vim-marker-down'},
   {'bullets-vim/bullets.vim'}
 
