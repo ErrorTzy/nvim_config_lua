@@ -13,10 +13,19 @@ vim.keymap.set("n","j","gj")
 vim.keymap.set("n","k","gk")
 vim.keymap.set("v","j","gj")
 vim.keymap.set("v","k","gk")
-vim.keymap.set("n","<C-s>",":w<CR>")
-vim.keymap.set("i","<C-s>","<Esc>:w<CR>a")
+vim.keymap.set({'n','i'},"<C-s>",function ()
+  vim.cmd("write")
+end)
 vim.keymap.set("i","<C-_>","<Esc>gcc<CR>i", {remap = true})
 vim.keymap.set("n","<C-_>","gcc", {remap = true})
+vim.keymap.set("x","<C-_>","gc", {remap = true})
+vim.keymap.set("i","<C-c>","<C-x><C-o>", {remap = true})
+vim.keymap.set("n",",",function ()
+  vim.api.nvim_win_set_width(0, vim.api.nvim_win_get_width(0) + 1)
+end)
+vim.keymap.set("n",".",function ()
+  vim.api.nvim_win_set_width(0, vim.api.nvim_win_get_width(0) - 1)
+end)
 vim.keymap.set("v","<C-c>","\"+y")
 vim.keymap.set("n","<C-a>","gg0vG$")
 vim.keymap.set("i","<C-l>","<c-g>u<Esc>[s1z=`]a<c-g>u")
@@ -45,3 +54,12 @@ vim.cmd.colorscheme "catppuccin"
 
 vim.g.vim_markdown_math = 1
 vim.g.markdown_fenced_languages = {'html', 'python', 'bash=sh'}
+
+-- for testing only
+-- vim.keymap.set('i','<c-v>', function ()
+--   local current_cursor = vim.api.nvim_win_get_cursor(0)
+--   local current_line = vim.api.nvim_get_current_line()
+--   local current_char = string.sub(current_line,current_cursor[2],current_cursor[2])
+--   vim.api.nvim_err_writeln(current_char)
+-- end)
+

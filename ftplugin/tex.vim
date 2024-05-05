@@ -4,7 +4,7 @@ let g:vimtex_compiler_latexmk = {
         \ 'aux_dir' : '/home/scott/Documents/app_storage/LatexBuildfiles/',
         \ 'out_dir' : '/home/scott/Documents/app_storage/LatexBuildfiles/',
         \ 'callback' : 1,
-        \ 'continuous' : 1,
+        \ 'continuous' : 0,
         \ 'executable' : 'latexmk',
         \ 'hooks' : [],
         \ 'options' : [
