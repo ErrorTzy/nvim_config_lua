@@ -1,5 +1,10 @@
 local line_begin = require("luasnip.extras.expand_conditions").line_begin
 
+local in_mathzone = function()
+  -- The `in_mathzone` function requires the VimTeX plugin
+  return vim.fn['vimtex#syntax#in_mathzone']() == 1
+end
+
 local latex_snippets = {
 
   --markdown
@@ -147,6 +152,30 @@ local latex_auto_snippets = {
     t("\\dots"),
   }),
 
+  s("mm",
+  fmta([[
+    \(<>\)
+  ]],{i(1),})
+  ),
+
+
+  -- Math
+  s("lim",
+  fmta([[
+    \lim_{x \to <>}
+  ]],{i(1),}),
+  {condition = in_mathzone}
+  ),s("ff",
+  fmta([[
+    \frac{<>}{<>}
+  ]],{i(1),i(2)}),
+  {condition = in_mathzone}
+  ),s("(",
+  fmta([[
+    \left(<>\right
+  ]],{i(1),}),
+  {condition = in_mathzone}
+  ),
 }
 
 return latex_snippets, latex_auto_snippets

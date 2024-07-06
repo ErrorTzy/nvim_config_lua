@@ -127,7 +127,8 @@ return {
       },
 
       mapping = cmp.mapping.preset.insert({
-        ['<Tab>'] = cmp.mapping.confirm({ select = true })
+        ['<Tab>'] = cmp.mapping.confirm({ select = true }),
+        ['<C-e>'] = cmp.mapping.abort(),
       }),
 
       sources = cmp.config.sources({

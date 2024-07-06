@@ -1,23 +1,23 @@
 local markdown_snippets = {
 }
 local markdown_snippets_auto = {
-  s("\\and",{
+  s({trig="\\and",wordTrig=false},{
     t("∧"),
-  }),s("\\or",{
+  }),s({trig="\\or",wordTrig=false},{
     t("∨"),
-  }),s("\\then",{
+  }),s({trig="\\then",wordTrig=false},{
     t("→"),
-  }),s("\\not",{
+  }),s({trig="\\not",wordTrig=false},{
     t("¬"),
-  }),s("\\nec",{
+  }),s({trig="\\nec",wordTrig=false},{
     t("◻"),
-  }),s("\\pos",{
+  }),s({trig="\\pos",wordTrig=false},{
     t("⋄"),
-  }),s("\\tf",{
+  }),s({trig="\\tf",wordTrig=false},{
     t("∴"),
-  }),s("\\iff",{
+  }),s({trig="\\iff",wordTrig=false},{
     t("↔"),
-  }),s("\\isnot",{
+  }),s({trig="\\isnot",wordTrig=false},{
     t("≠"),
   }),
 }
